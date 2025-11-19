@@ -1,10 +1,7 @@
 import { useState } from "react"
-
-type Todo = {
-  id: string,
-  text: string,
-  completed: boolean
-}
+import type { Todo } from './types/todo'
+import TodoForm from "./components/TodoForm"
+import TodoList from "./components/TodoList"
 
 function App() {
   const [value, setValue] = useState<string>('')
@@ -71,32 +68,18 @@ function App() {
     <main>
       <h1>Todo App</h1>
 
-      <form action="post" method="post" onSubmit={handleAddTodo}>
-        <input type="text" value={value} onChange={e => setValue(e.target.value)} />
+      <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
-        <button type="submit">Add</button>
-      </form>
-
-      {todos.map(todo => (
-        <div key={todo.id}>
-          {editId === todo.id ? (
-            <>
-              <input type="text" value={editValue} onChange={e => setEditValue(e.target.value)} />
-
-              <button onClick={() => handleEditTodo(todo)}>Save</button>
-            </>
-          ): (
-            <>
-              <p>{todo.text}</p>
-
-              <input type="checkbox" checked={todo.completed} onChange={() =>handleCompleteTodo(todo)} />
-
-              <button onClick={() => startUpdateTodo(todo)}>Update</button>
-              <button onClick={() => handleDeleteTodo(todo)}>Delete</button>
-            </>
-          )}
-        </div>
-      ))}
+      <TodoList
+        todos={todos} 
+        editId={editId} 
+        editValue={editValue} 
+        onToggle={handleCompleteTodo} 
+        onDelete={handleDeleteTodo} 
+        onStartEdit={startUpdateTodo} 
+        onSaveEdit={handleEditTodo} 
+        onEditValue={setEditValue}
+      />
     </main>
   )
 }
