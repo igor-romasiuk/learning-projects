@@ -8,6 +8,8 @@ type Todo = {
 
 function App() {
   const [value, setValue] = useState<string>('')
+  const [editId, setEditId] = useState<string>('')
+  const [editValue, setEditValue] = useState<string>('')
   const [todos, setTodos] = useState<Todo[]>([])
 
   const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,6 +47,26 @@ function App() {
     )
   }
 
+  const startUpdateTodo = (todo: Todo) => {
+    setEditId(todo.id)
+    setEditValue(todo.text)
+  }
+
+  const handleEditTodo = (todo: Todo) => {
+    setTodos (
+      todos.map(item => {
+        if (item.id === todo.id) {
+          return {...item, text: editValue}
+        } else {
+          return item
+        }
+      })
+    )
+
+    setEditId('')
+    setEditValue('')
+  }
+
   return (
     <main>
       <h1>Todo App</h1>
@@ -57,11 +79,22 @@ function App() {
 
       {todos.map(todo => (
         <div key={todo.id}>
-          <p>{todo.text}</p>
+          {editId === todo.id ? (
+            <>
+              <input type="text" value={editValue} onChange={e => setEditValue(e.target.value)} />
 
-          <input type="checkbox" checked={todo.completed} onChange={() =>handleCompleteTodo(todo)} />
+              <button onClick={() => handleEditTodo(todo)}>Save</button>
+            </>
+          ): (
+            <>
+              <p>{todo.text}</p>
 
-          <button onClick={() => handleDeleteTodo(todo)}>Delete</button>
+              <input type="checkbox" checked={todo.completed} onChange={() =>handleCompleteTodo(todo)} />
+
+              <button onClick={() => startUpdateTodo(todo)}>Update</button>
+              <button onClick={() => handleDeleteTodo(todo)}>Delete</button>
+            </>
+          )}
         </div>
       ))}
     </main>
