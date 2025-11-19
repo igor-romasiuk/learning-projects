@@ -31,6 +31,20 @@ function App() {
     setTodos(filteredTodo)
   }
 
+  const handleCompleteTodo = (todo: Todo) => {
+    setTodos(
+      todos.map(item => {
+        if (item.id === todo.id) {
+          console.log("Completed");
+          
+          return {...item, completed: !item.completed}
+        } else {
+          return item
+        }
+      })
+    )
+  }
+
   return (
     <main>
       <h1>Todo App</h1>
@@ -44,6 +58,8 @@ function App() {
       {todos.map(todo => (
         <div key={todo.id}>
           <p>{todo.text}</p>
+
+          <input type="checkbox" checked={todo.completed} onChange={() =>handleCompleteTodo(todo)} />
 
           <button onClick={() => handleDeleteTodo(todo)}>Delete</button>
         </div>
