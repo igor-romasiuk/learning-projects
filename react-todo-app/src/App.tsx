@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { Todo } from './types/todo'
 import TodoForm from "./components/TodoForm"
 import TodoList from "./components/TodoList"
@@ -8,6 +8,26 @@ function App() {
   const [editId, setEditId] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
   const [todos, setTodos] = useState<Todo[]>([])
+
+  useEffect(() => {
+    const saved = localStorage.getItem('react-todos')
+
+    if (!saved) return
+
+    try {
+      const parsed: unknown = JSON.parse(saved)
+
+      if (Array.isArray(parsed)) {
+        setTodos(parsed as Todo[])
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('react-todos', JSON.stringify(todos))
+  }, [todos])
 
   const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
