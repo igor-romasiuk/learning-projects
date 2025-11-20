@@ -8,6 +8,22 @@ function App() {
   const [editId, setEditId] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
   const [todos, setTodos] = useState<Todo[]>([])
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('')
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(searchValue.trim().toLowerCase())
+    }, 300)
+
+    return () => window.clearTimeout(timer)
+  }, [searchValue])
+
+  const visibleTodos = todos.filter(todo => {
+    if (!debouncedSearch) return true
+
+    return todo.text.trim().toLocaleLowerCase().includes(debouncedSearch)
+  })
 
   useEffect(() => {
     const saved = localStorage.getItem('react-todos')
@@ -90,8 +106,10 @@ function App() {
 
       <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
+      <input type="text" value={searchValue} onChange={e => setSearchValue(e.target.value)} />
+
       <TodoList
-        todos={todos} 
+        todos={visibleTodos} 
         editId={editId} 
         editValue={editValue} 
         onToggle={handleCompleteTodo} 
