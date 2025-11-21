@@ -7,9 +7,10 @@ function App() {
   const [value, setValue] = useState<string>('')
   const [editId, setEditId] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>(loadStoredTodos)
   const [searchValue, setSearchValue] = useState<string>('')
   const [debouncedSearch, setDebouncedSearch] = useState<string>('')
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -20,27 +21,42 @@ function App() {
   }, [searchValue])
 
   const visibleTodos = todos.filter(todo => {
-    if (!debouncedSearch) return true
-
-    return todo.text.trim().toLocaleLowerCase().includes(debouncedSearch)
+    const matchesSearch = debouncedSearch
+      ? todo.text.trim().toLocaleLowerCase().includes(debouncedSearch)
+      : true
+    
+    if (!matchesSearch) return false
+    
+    switch (filter) {
+      case 'active':
+        return !todo.completed
+        
+      case 'completed':
+        return todo.completed
+    
+      default:
+        return true
+    }
   })
 
-  useEffect(() => {
+  function loadStoredTodos(): Todo[] {
     const saved = localStorage.getItem('react-todos')
 
-    if (!saved) return
+    if (!saved) return []
 
     try {
       const parsed: unknown = JSON.parse(saved)
 
       if (Array.isArray(parsed)) {
-        setTodos(parsed as Todo[])
+        return parsed as Todo[]
       }
     } catch (error) {
       console.log(error);
     }
-  }, [])
 
+    return []
+  }
+  
   useEffect(() => {
     localStorage.setItem('react-todos', JSON.stringify(todos))
   }, [todos])
@@ -100,6 +116,8 @@ function App() {
     setEditValue('')
   }
 
+
+
   return (
     <main>
       <h1>Todo App</h1>
@@ -107,6 +125,11 @@ function App() {
       <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
       <input type="text" value={searchValue} onChange={e => setSearchValue(e.target.value)} />
+      <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
+        <option value="all">All</option>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+      </select>
 
       <TodoList
         todos={visibleTodos} 
