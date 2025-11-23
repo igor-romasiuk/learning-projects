@@ -12,6 +12,32 @@ function App() {
   const [debouncedSearch, setDebouncedSearch] = useState<string>('')
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
 
+  const todosUrl = 'https://jsonplaceholder.typicode.com/todos?_limit=5'
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      try {
+        const response = await fetch(todosUrl)
+
+        if (!response.ok) throw new Error('Request faild')
+
+        const data: Array<{id: number, title: string, completed: boolean}> = await response.json()
+
+        setTodos(
+          data.map(todo => ({
+            id: todo.id.toString(),
+            text: todo.title,
+            completed: todo.completed
+          }))
+        )
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    loadTodos()
+  }, [])
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setDebouncedSearch(searchValue.trim().toLowerCase())
