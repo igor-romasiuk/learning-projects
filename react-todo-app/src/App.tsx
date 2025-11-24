@@ -2,6 +2,15 @@ import { useEffect, useState } from "react"
 import type { Todo } from './types/todo'
 import TodoForm from "./components/TodoForm"
 import TodoList from "./components/TodoList"
+import Pagination from "./components/Pagination"
+import SearchInput from "./components/SearchInput"
+import FilterSelect from "./components/FilterSelect"
+import { loadStoredTodos, saveTodos } from "./utils/todoStorage"
+import { usePagination } from "./hooks/usePagination"
+import { useDebouncedValue } from "./hooks/useDebouncedValue"
+import { useFilteredTodos } from "./hooks/useFilteredTodos"
+
+const PAGE_SIZE = 5
 
 function App() {
   const [value, setValue] = useState<string>('')
@@ -9,10 +18,19 @@ function App() {
   const [editValue, setEditValue] = useState<string>('')
   const [todos, setTodos] = useState<Todo[]>(loadStoredTodos)
   const [searchValue, setSearchValue] = useState<string>('')
-  const [debouncedSearch, setDebouncedSearch] = useState<string>('')
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
+  const debouncedSearch = useDebouncedValue(searchValue.trim().toLowerCase())
+  const visibleTodos = useFilteredTodos(todos, debouncedSearch, filter)
+  const {
+    page,
+    paginationRange,
+    handlePageChange,
+    setTotalItems,
+    isFirstPage,
+    isLastPage,
+  } = usePagination({ pageSize: PAGE_SIZE })
 
-  const todosUrl = 'https://jsonplaceholder.typicode.com/todos?_limit=5'
+  const todosUrl = `https://jsonplaceholder.typicode.com/todos?_limit=${PAGE_SIZE}&_page=${page}`
 
   useEffect(() => {
     const loadTodos = async () => {
@@ -22,6 +40,9 @@ function App() {
         if (!response.ok) throw new Error('Request faild')
 
         const data: Array<{id: number, title: string, completed: boolean}> = await response.json()
+        const totalFromHeader = Number(response.headers.get('x-total-count'))
+        const totalCount = Number.isFinite(totalFromHeader) ? totalFromHeader : data.length
+        setTotalItems(totalCount)
 
         setTodos(
           data.map(todo => ({
@@ -36,55 +57,10 @@ function App() {
     }
 
     loadTodos()
-  }, [])
+  }, [todosUrl])
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedSearch(searchValue.trim().toLowerCase())
-    }, 300)
-
-    return () => window.clearTimeout(timer)
-  }, [searchValue])
-
-  const visibleTodos = todos.filter(todo => {
-    const matchesSearch = debouncedSearch
-      ? todo.text.trim().toLocaleLowerCase().includes(debouncedSearch)
-      : true
-    
-    if (!matchesSearch) return false
-    
-    switch (filter) {
-      case 'active':
-        return !todo.completed
-        
-      case 'completed':
-        return todo.completed
-    
-      default:
-        return true
-    }
-  })
-
-  function loadStoredTodos(): Todo[] {
-    const saved = localStorage.getItem('react-todos')
-
-    if (!saved) return []
-
-    try {
-      const parsed: unknown = JSON.parse(saved)
-
-      if (Array.isArray(parsed)) {
-        return parsed as Todo[]
-      }
-    } catch (error) {
-      console.log(error);
-    }
-
-    return []
-  }
-  
-  useEffect(() => {
-    localStorage.setItem('react-todos', JSON.stringify(todos))
+    saveTodos(todos)
   }, [todos])
 
   const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
@@ -142,20 +118,14 @@ function App() {
     setEditValue('')
   }
 
-
-
   return (
     <main>
       <h1>Todo App</h1>
 
       <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
-      <input type="text" value={searchValue} onChange={e => setSearchValue(e.target.value)} />
-      <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)}>
-        <option value="all">All</option>
-        <option value="active">Active</option>
-        <option value="completed">Completed</option>
-      </select>
+      <SearchInput value={searchValue} onChange={setSearchValue} />
+      <FilterSelect value={filter} onChange={setFilter} />
 
       <TodoList
         todos={visibleTodos} 
@@ -166,6 +136,14 @@ function App() {
         onStartEdit={startUpdateTodo} 
         onSaveEdit={handleEditTodo} 
         onEditValue={setEditValue}
+      />
+
+      <Pagination
+        currentPage={page}
+        paginationRange={paginationRange}
+        onPageChange={handlePageChange}
+        isFirstPage={isFirstPage}
+        isLastPage={isLastPage}
       />
     </main>
   )
