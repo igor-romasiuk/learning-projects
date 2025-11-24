@@ -19,6 +19,7 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>(loadStoredTodos)
   const [searchValue, setSearchValue] = useState<string>('')
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all')
+  const [loading, setLoading] = useState<boolean>(false)
   const debouncedSearch = useDebouncedValue(searchValue.trim().toLowerCase())
   const visibleTodos = useFilteredTodos(todos, debouncedSearch, filter)
   const {
@@ -33,9 +34,13 @@ function App() {
   const todosUrl = `https://jsonplaceholder.typicode.com/todos?_limit=${PAGE_SIZE}&_page=${page}`
 
   useEffect(() => {
+    const controller = new AbortController()
+
     const loadTodos = async () => {
+      setLoading(true)
+
       try {
-        const response = await fetch(todosUrl)
+        const response = await fetch(todosUrl,  { signal: controller.signal })
 
         if (!response.ok) throw new Error('Request faild')
 
@@ -52,11 +57,20 @@ function App() {
           }))
         )
       } catch (error) {
-        console.log(error);
+        if (error instanceof DOMException && error.name === 'AbortError') {
+
+          return
+        }
+      } finally {
+        setLoading(false)
       }
     }
 
     loadTodos()
+
+    return () => {
+      controller.abort()
+    }
   }, [todosUrl])
 
   useEffect(() => {
@@ -121,6 +135,10 @@ function App() {
   return (
     <main>
       <h1>Todo App</h1>
+
+      {loading && (
+        <span>Loading...</span>
+      )}
 
       <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
