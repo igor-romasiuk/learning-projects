@@ -102,8 +102,6 @@ function App() {
     setTodos(
       todos.map(item => {
         if (item.id === todo.id) {
-          console.log("Completed");
-          
           return {...item, completed: !item.completed}
         } else {
           return item
@@ -133,36 +131,53 @@ function App() {
   }
 
   return (
-    <main>
-      <h1>Todo App</h1>
+    <main className="min-h-screen bg-slate-950 px-4 py-10 text-slate-100">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 rounded-[32px] border border-white/5 bg-slate-900/50 p-8 shadow-[0_25px_120px_-45px_rgba(15,23,42,1)] backdrop-blur-xl lg:p-10">
+        <header className="text-center">
+          <p className="text-xs uppercase tracking-[0.5em] text-indigo-300/80">Stay organized</p>
+          <h1 className="mt-4 text-4xl font-semibold sm:text-5xl">Todo App</h1>
+          <p className="mt-3 text-base text-slate-300">
+            Capture your ideas, focus on one task at a time, and celebrate the wins.
+          </p>
+        </header>
 
-      {loading && (
-        <span>Loading...</span>
-      )}
+        <section className="space-y-5">
+          <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
 
-      <TodoForm value={value} onSubmit={handleAddTodo} onChange={e => setValue(e.target.value)} />
+          <div className="grid gap-4 md:grid-cols-[2fr,1fr]">
+            <SearchInput value={searchValue} onChange={setSearchValue} />
+            <FilterSelect value={filter} onChange={setFilter} />
+          </div>
+        </section>
 
-      <SearchInput value={searchValue} onChange={setSearchValue} />
-      <FilterSelect value={filter} onChange={setFilter} />
+        <section className="space-y-6 rounded-3xl border border-white/5 bg-slate-950/60 p-6 shadow-inner shadow-black/40">
+          <div className="flex items-center justify-between gap-4 text-sm text-slate-400">
+            <p>
+              Showing <span className="font-semibold text-slate-100">{visibleTodos.length}</span> todos
+            </p>
+            {loading && <span className="animate-pulse text-indigo-300">Loading fresh todos...</span>}
+          </div>
 
-      <TodoList
-        todos={visibleTodos} 
-        editId={editId} 
-        editValue={editValue} 
-        onToggle={handleCompleteTodo} 
-        onDelete={handleDeleteTodo} 
-        onStartEdit={startUpdateTodo} 
-        onSaveEdit={handleEditTodo} 
-        onEditValue={setEditValue}
-      />
+          <TodoList
+            todos={visibleTodos}
+            editId={editId}
+            editValue={editValue}
+            onToggle={handleCompleteTodo}
+            onDelete={handleDeleteTodo}
+            onStartEdit={startUpdateTodo}
+            onSaveEdit={handleEditTodo}
+            onEditValue={setEditValue}
+          />
+        </section>
 
-      <Pagination
-        currentPage={page}
-        paginationRange={paginationRange}
-        onPageChange={handlePageChange}
-        isFirstPage={isFirstPage}
-        isLastPage={isLastPage}
-      />
+        <Pagination
+          currentPage={page}
+          paginationRange={paginationRange}
+          onPageChange={handlePageChange}
+          isFirstPage={isFirstPage}
+          isLastPage={isLastPage}
+        />
+      </div>
     </main>
   )
 }
