@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import fetchWeather from '../helpers/weather'
+import styles from './CityCard.module.css'
 
 type CityCardProps = {
   name: string
@@ -15,14 +16,20 @@ export default function CityCard({ name, latitude, longitude }: CityCardProps) {
   })
 
   if (isLoading) {
-    return <div>Loading {name}...</div>
+    return (
+      <div className={styles.stateCard}>
+        <p>Loading weather for {name}…</p>
+      </div>
+    )
   }
 
   if (isError || !data) {
     return (
-      <div>
+      <div className={styles.stateCard}>
         <p>Failed to load weather for {name}</p>
-        <button onClick={() => refetch()}>Try again</button>
+        <button className={styles.retryButton} onClick={() => refetch()}>
+          Try again
+        </button>
       </div>
     )
   }
@@ -32,18 +39,32 @@ export default function CityCard({ name, latitude, longitude }: CityCardProps) {
   const trend = typeof nextTemperature === 'number' ? nextTemperature - temperature : 0
   const time = data.hourly.time[0]
 
+  const parsedDate = new Date(time)
+  const displayTime = Number.isNaN(parsedDate.getTime()) ? String(time) : parsedDate.toLocaleString()
+
+  const trendClass =
+    trend > 0 ? styles.trendPositive : trend < 0 ? styles.trendNegative : styles.trendNeutral
+
   return (
-    <div>
-      <h2>{name}</h2>
-      <p>{time.toLocaleString()}</p>
-      <p>Current temperature: {temperature.toFixed(1)}°C</p>
-      {typeof nextTemperature === 'number' && (
-        <p>
-          Next hour: {nextTemperature.toFixed(1)}°C ({trend > 0 ? '+' : ''}
-          {trend.toFixed(1)}° trend)
-        </p>
-      )}
-      <button onClick={() => refetch()}>Refresh</button>
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
+        <h2 className={styles.cityName}>{name}</h2>
+        <p className={styles.timestamp}>{displayTime}</p>
+      </div>
+
+      <div className={styles.stats}>
+        <p className={styles.currentTemp}>{temperature.toFixed(1)}°C</p>
+        {typeof nextTemperature === 'number' && (
+          <p className={`${styles.trend} ${trendClass}`}>
+            Next hour: {nextTemperature.toFixed(1)}°C ({trend > 0 ? '+' : ''}
+            {trend.toFixed(1)}° trend)
+          </p>
+        )}
+      </div>
+
+      <button className={styles.refreshButton} onClick={() => refetch()}>
+        Refresh
+      </button>
     </div>
   )
 }
