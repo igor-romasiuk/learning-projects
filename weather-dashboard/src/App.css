@@ -1,0 +1,122 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(180deg, #edf2fb 0%, #fefefe 60%);
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+  color: #0f172a;
+}
+
+.app h1 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.search-container {
+  position: relative;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #cbd5f5;
+  background: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 1rem;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+  z-index: 10;
+  padding: 0.75rem 0;
+}
+
+.suggestions ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestion-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  transition: background 0.2s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus-visible {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.suggestion-primary {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.suggestion-secondary {
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.suggestion-meta {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.suggestion-message {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.suggestion-message + .suggestion-message {
+  border-top: 1px solid #e2e8f0;
+}
+
+.suggestion-error {
+  color: #dc2626;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
