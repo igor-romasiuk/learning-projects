@@ -3,7 +3,7 @@ import './App.css'
 import CityCard from './components/CityCard'
 import { useQuery } from '@tanstack/react-query'
 
-const cities = [
+const initialCities = [
   { name: 'Kyiv', latitude: 50.45, longitude: 30.52 },
   { name: 'Lviv', latitude: 49.84, longitude: 24.03 },
   { name: 'Odesa', latitude: 46.47, longitude: 30.73 },
@@ -20,6 +20,7 @@ type CitySearchResult = {
 
 function App() {
   const [value, setValue] = useState('')
+  const [cities, setCities] = useState(initialCities)
   const normalizedValue = value.trim().toLowerCase()
 
   const fetchSearchCity = async (searchTerm: string) => {
@@ -45,6 +46,21 @@ function App() {
 
   const searchResults = data?.results ?? []
   const shouldShowSuggestions = normalizedValue.length >= 2
+
+  const handleAddCity = (city: CitySearchResult) => {
+
+    const newCity = {
+      id: city.id,
+      name: city.name,
+      country: city.country,
+      admin1: city.admin1,
+      latitude: city.latitude,
+      longitude: city.longitude,
+    }
+
+    setCities((prev) => [...prev, newCity])
+    setValue('')
+  }
 
   return (
     <div className="app">
@@ -90,6 +106,7 @@ function App() {
                         {result.latitude.toFixed(2)}°, {result.longitude.toFixed(2)}°
                       </span>
                     </button>
+                    <button onClick={() => handleAddCity(result)}>Add</button>
                   </li>
                 ))}
               </ul>
