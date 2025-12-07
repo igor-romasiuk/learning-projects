@@ -5,11 +5,13 @@ import CitySearch from './components/CitySearch'
 import { initialCities } from './constants/cities'
 import useCitySearch from './hooks/useCitySearch'
 import type { CitySearchResult } from './types/city'
+import useDebounce from './hooks/useDebounce'
 
 function App() {
   const [value, setValue] = useState('')
   const [cities, setCities] = useState(initialCities)
-  const { results, shouldShowSuggestions, isLoading, isError, error } = useCitySearch(value)
+  const debouncedValue = useDebounce(value, 300)
+  const { results, shouldShowSuggestions, isLoading, isError, error } = useCitySearch(debouncedValue)
 
   const handleAddCity = (city: CitySearchResult) => {
     setCities(prev => {
