@@ -6,12 +6,25 @@ import { initialCities } from './constants/cities'
 import useCitySearch from './hooks/useCitySearch'
 import type { CitySearchResult } from './types/city'
 import useDebounce from './hooks/useDebounce'
+import usePagination from './hooks/usePagination'
+import Pagination from './components/Pagination'
 
 function App() {
   const [value, setValue] = useState('')
   const [cities, setCities] = useState(initialCities)
   const debouncedValue = useDebounce(value, 300)
   const { results, shouldShowSuggestions, isLoading, isError, error } = useCitySearch(debouncedValue)
+
+  const {
+    items: paginatedCities,
+    page,
+    totalPages,
+    hasPrev,
+    hasNext,
+    goToPrev,
+    goToNext,
+    goToPage,
+  } = usePagination(cities, 6)
 
   const handleAddCity = (city: CitySearchResult) => {
     setCities(prev => {
@@ -55,10 +68,22 @@ function App() {
       />
 
       <div className="cards-grid">
-        {cities.map(city => (
+        {paginatedCities.map(city => (
           <CityCard key={city.name} {...city} />
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          goToPrev={goToPrev}
+          goToNext={goToNext}
+          goToPage={goToPage}
+        />
+      )}
     </div>
   )
 }
