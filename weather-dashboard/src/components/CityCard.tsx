@@ -1,14 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import fetchWeather from '../helpers/weather'
+import type { City } from '../types/city'
 import styles from './CityCard.module.css'
 
-type CityCardProps = {
-  name: string
-  latitude: number
-  longitude: number
-}
-
-export default function CityCard({ name, latitude, longitude }: CityCardProps) {
+export default function CityCard({ name, latitude, longitude }: City) {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['weather', latitude, longitude],
     queryFn: () => fetchWeather({ latitude, longitude }),
