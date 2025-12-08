@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import CityCard from '../components/CityCard'
 import CitySearch from '../components/CitySearch'
 import Pagination from '../components/Pagination'
@@ -13,6 +13,9 @@ export default function DashboardPage() {
   const [value, setValue] = useState('')
   const [cities, setCities] = useState(initialCities)
   const debouncedValue = useDebounce(value, 300)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const pageFromUrl = Number(searchParams.get('page') ?? 1)
 
   const {
     results,
@@ -31,7 +34,22 @@ export default function DashboardPage() {
     goToPrev,
     goToNext,
     goToPage,
-  } = usePagination(cities, 6)
+  } = usePagination(cities, 6, pageFromUrl)
+
+  const handleGoToPage = (value: number) => {
+    setSearchParams({page: String(value)})
+    goToPage(value)
+  }
+
+  const handleGoToNext = () => {
+    setSearchParams({ page: String(page + 1) })
+    goToNext()
+  }
+
+  const handleGoToPrev = () => {
+    setSearchParams({ page: String(page - 1) })
+    goToPrev()
+  }
 
   const handleAddCity = (city: CitySearchResult) => {
     setCities(prev => {
@@ -93,9 +111,9 @@ export default function DashboardPage() {
           totalPages={totalPages}
           hasPrev={hasPrev}
           hasNext={hasNext}
-          goToPrev={goToPrev}
-          goToNext={goToNext}
-          goToPage={goToPage}
+          goToPrev={handleGoToPrev}
+          goToNext={handleGoToNext}
+          goToPage={handleGoToPage}
         />
       )}
     </>

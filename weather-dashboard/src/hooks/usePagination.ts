@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { paginate } from "../services/paginate"
 
-export default function usePagination<T>(items: T[], pageSize = 5) {
-    const [page, setPage] = useState(1)
+export default function usePagination<T>(items: T[], pageSize = 5, initialPage = 1) {
+    const [page, setPage] = useState(initialPage)
   
     useEffect(() => {
       setPage(1)
