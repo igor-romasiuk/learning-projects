@@ -8,12 +8,13 @@ import useCitySearch from '../hooks/useCitySearch'
 import useDebounce from '../hooks/useDebounce'
 import usePagination from '../hooks/usePagination'
 import type { CitySearchResult } from '../types/city'
+import { useCities } from '../hooks/useCities'
 
 export default function DashboardPage() {
   const [value, setValue] = useState('')
-  const [cities, setCities] = useState(initialCities)
   const debouncedValue = useDebounce(value, 300)
   const [searchParams, setSearchParams] = useSearchParams()
+  const {cities, addCity} = useCities()
 
   const pageFromUrl = Number(searchParams.get('page') ?? 1)
 
@@ -52,26 +53,10 @@ export default function DashboardPage() {
   }
 
   const handleAddCity = (city: CitySearchResult) => {
-    setCities(prev => {
-      const alreadyAdded = prev.some(
-        existing =>
-          existing.name === city.name &&
-          existing.latitude === city.latitude &&
-          existing.longitude === city.longitude
-      )
-
-      if (alreadyAdded) {
-        return prev
-      }
-
-      return [
-        ...prev,
-        {
-          name: city.name,
-          latitude: city.latitude,
-          longitude: city.longitude,
-        },
-      ]
+    addCity({
+      name: city.name,
+      latitude: city.latitude,
+      longitude: city.longitude,
     })
 
     setValue('')
