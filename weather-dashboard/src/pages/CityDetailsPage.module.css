@@ -1,0 +1,260 @@
+.page {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px rgba(15, 23, 42, 0.12);
+  padding: 2rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #6366f1;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #4338ca;
+}
+
+.titleGroup h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #0f172a;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.titleGroup span {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, #eef2ff, #fdf4ff);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border: 1px solid rgba(76, 29, 149, 0.12);
+}
+
+.summaryLabel {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #6d28d9;
+  margin: 0;
+}
+
+.summaryTemp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.temperature {
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #312e81;
+}
+
+.feels {
+  font-size: 0.95rem;
+  color: #4c1d95;
+}
+
+.summaryMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #4c1d95;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.statCard {
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: radial-gradient(circle at top, rgba(148, 163, 184, 0.15), #fff);
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #475569;
+}
+
+.statValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.statHelper {
+  font-size: 0.85rem;
+  color: #6366f1;
+}
+
+.mapSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mapHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.mapHeader p {
+  margin: 0.15rem 0 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.coordsChip {
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4c1d95;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.mapCard {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.mapCanvas {
+  position: relative;
+  height: 280px;
+  background-image: linear-gradient(
+      rgba(148, 163, 184, 0.25) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.25) 1px, transparent 1px),
+    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.12), transparent 45%),
+    radial-gradient(circle at 60% 50%, rgba(59, 130, 246, 0.18), transparent 40%),
+    linear-gradient(135deg, #0f172a, #1d4ed8);
+  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
+  background-blend-mode: overlay;
+}
+
+.mapCanvas::after {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.25rem;
+}
+
+.mapMarker {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.mapMarker::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f97316;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+}
+
+.mapMarker span {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.mapHint {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .titleGroup {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .summaryMeta {
+    flex-direction: column;
+  }
+
+  .mapHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mapCanvas {
+    height: 220px;
+  }
+}
